@@ -167,6 +167,7 @@ func TestGenerateTree() []Trees {
 
 	return GenerateTree(Tress.ConvertToINodeArray(result))
 
+	//正常接受用法
 	//return GenerateTree(ConvertToINodeArrayBak(result))
 }
 
@@ -181,6 +182,7 @@ func (s Tress) ConvertToINodeArray() (nodes []INode) {
 	return nodes
 }
 
+//正常接受案例的函数使用方法
 func ConvertToINodeArrayBak(s Tress) (nodes []INode) {
 	for _, v := range s {
 		nodes = append(nodes, v)
