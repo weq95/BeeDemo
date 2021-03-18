@@ -103,14 +103,6 @@ func recursiveTree(tree *Trees, nodes []INode) {
 // =================================================================== //
 // =================================================================== //
 // 定义我们自己的菜单对象
-type SystemMenu struct {
-	Id       int    `json:"id"`        //id
-	FatherId int    `json:"father_id"` //上级菜单id
-	Name     string `json:"name"`      //菜单名
-	Route    string `json:"route"`     //页面路径
-	Icon     string `json:"icon"`      //图标路径
-}
-
 type CommentTree struct {
 	Id         int       `json:"id"`
 	Pid        int       `json:"pid"`
@@ -166,24 +158,11 @@ func TestGenerateTree() []Trees {
 	}
 
 	return GenerateTree(Tress.ConvertToINodeArray(result))
-
-	//正常接受用法
-	//return GenerateTree(ConvertToINodeArrayBak(result))
 }
 
 // ConvertToINodeArray 将当前数组转换成父类 INode 接口 数组
 // 这里没有参数，为啥会(能)传参？
 func (s Tress) ConvertToINodeArray() (nodes []INode) {
-	//fmt.Println(ids)
-	for _, v := range s {
-		nodes = append(nodes, v)
-	}
-
-	return nodes
-}
-
-//正常接受案例的函数使用方法
-func ConvertToINodeArrayBak(s Tress) (nodes []INode) {
 	for _, v := range s {
 		nodes = append(nodes, v)
 	}
