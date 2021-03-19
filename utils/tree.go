@@ -2,6 +2,8 @@ package utils
 
 import (
 	"BeeDemo/models"
+	"encoding/json"
+	"fmt"
 	"github.com/beego/beego/v2/client/orm"
 	"time"
 )
@@ -168,4 +170,137 @@ func (s Tress) ConvertToINodeArray() (nodes []INode) {
 	}
 
 	return nodes
+}
+
+// 未经过封装的
+// ---------- tree
+// --------------- 示例
+
+type Datanode struct {
+	Id    int         `json:"id"`
+	PId   int         `json:"pid"`
+	Name  string      `json:"name"`
+	Child []*Datanode `json:"child"`
+}
+
+func main() {
+
+	Data := GetResult()
+	//父节点
+	pid := 0
+	MakeTree(Data, Data[pid]) //调用生成tree
+	TransFormJson(Data[pid])  //转化为json
+}
+
+func GetResult() []*Datanode {
+	return []*Datanode{
+		{
+			Id:   0,
+			PId:  -1,
+			Name: "目录",
+		},
+		{
+			Id:   1,
+			PId:  0,
+			Name: "一、水果",
+		},
+		{
+			Id:   2,
+			PId:  1,
+			Name: "1.苹果",
+		},
+		{
+			Id:   3,
+			PId:  1,
+			Name: "2.香蕉",
+		},
+		{
+			Id:   4,
+			PId:  0,
+			Name: "二、蔬菜",
+		},
+		{
+			Id:   5,
+			PId:  4,
+			Name: "1.芹菜",
+		},
+		{
+			Id:   6,
+			PId:  4,
+			Name: "2.黄瓜",
+		},
+		{
+			Id:   7,
+			PId:  6,
+			Name: "(1)黄瓜特点",
+		},
+		{
+			Id:   8,
+			PId:  4,
+			Name: "3.西红柿",
+		},
+		{
+			Id:   9,
+			PId:  0,
+			Name: "三、关系",
+		},
+		{
+			Id:   10,
+			PId:  6,
+			Name: "(2)黄瓜品质",
+		},
+		{
+			Id:   11,
+			PId:  6,
+			Name: "(2)黄瓜颜色",
+		},
+		{
+			Id:   12,
+			PId:  6,
+			Name: "(2)黄瓜产地",
+		},
+	}
+}
+func MakeTree(Data []*Datanode, node *Datanode) { //参数为父节点，添加父节点的子节点指针切片
+	childs, _ := HasChild(Data, node) //判断节点是否有子节点并返回
+	if childs == nil {
+		return
+	}
+
+	node.Child = append(node.Child, childs[0:]...) //添加子节点
+
+	for _, v := range childs {
+		//查询子节点的子节点，并添加到子节点
+		_, has := HasChild(Data, v)
+		if has {
+			MakeTree(Data, v) //递归添加节点
+		}
+	}
+	return
+}
+
+func HasChild(Data []*Datanode, node *Datanode) (child []*Datanode, yes bool) {
+	for idx, v := range Data {
+		if v.PId == node.Id {
+			child = append(child, v)
+			continue
+		}
+
+		if Data[idx].Child == nil {
+			Data[idx].Child = []*Datanode{}
+		}
+	}
+
+	if child != nil {
+		yes = true
+	}
+
+	return child, yes
+}
+
+func TransFormJson(Data *Datanode) { //转为json
+
+	JsonData, _ := json.Marshal(Data)
+
+	fmt.Println(string(JsonData))
 }
